@@ -41,9 +41,8 @@ Trader.prototype.retry = function(method, args) {
 
 Trader.prototype.getPortfolio = function(callback) {
   var set = function(err, data) {
-
-    if(!_.isEmpty(data.error))
-      return callback('BITSTAMP API ERROR: ' + data.error);
+    if(err || !_.isEmpty(data.error))
+      return callback('BITSTAMP API ERROR: ' + (err || data.error));
 
     var portfolio = [];
     _.each(data, function(amount, asset) {
@@ -93,10 +92,10 @@ Trader.prototype.buy = function(amount, price, callback) {
   amount /= 100000000;
 
   // prevent:
-  // 'Ensure that there are no more than 2 decimal places.'
-  price *= 100;
+  // 'Ensure that there are no more than 3 decimal places.'
+  price *= 10000;
   price = Math.floor(price);
-  price /= 100;
+  price /= 10000;
 
   this.bitstamp.buy(this.market, amount, price, undefined, set);
 }
@@ -110,10 +109,10 @@ Trader.prototype.sell = function(amount, price, callback) {
   }.bind(this);
 
   // prevent:
-  // 'Ensure that there are no more than 2 decimal places.'
-  price *= 100;
+  // 'Ensure that there are no more than 3 decimal places.'
+  price *= 10000;
   price = Math.ceil(price);
-  price /= 100;
+  price /= 10000;
 
   this.bitstamp.sell(this.market, amount, price, undefined, set);
 }

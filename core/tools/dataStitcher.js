@@ -7,8 +7,16 @@ var config = util.getConfig();
 var dirs = util.dirs();
 var log = require(dirs.core + '/log');
 
+var CandleManager = require(dirs.budfox + 'candleManager');
+var TradeBatcher = require(dirs.budfox + 'tradeBatcher');
+
+var exchangeChecker = require(util.dirs().core + 'exchangeChecker');
+
 var Stitcher = function(batcher) {
   this.batcher = batcher;
+  this.candleManager = new CandleManager;
+  this.exchangeSettings = exchangeChecker.settings(config.watch);
+  this.tradeBatcher = new TradeBatcher(this.exchangeSettings.tid);
 }
 
 Stitcher.prototype.ago = function(ts) {
@@ -161,6 +169,13 @@ Stitcher.prototype.prepareHistoricalData = function(done) {
 
         if(exchangeData.from < idealExchangeStartTimeTS) {
           log.info('\tHowever the exchange returned enough data anyway!');
+          this.candleManager.on('candles', this.batcher.write);
+          this.tradeBatcher.on(
+            'new batch',
+            this.candleManager.processTrades
+          );
+          this.tradeBatcher.write(exchangeData.data);
+
         } else if(localData) {
           log.info(
             '\tThe exchange does not return enough data.',
@@ -180,8 +195,6 @@ Stitcher.prototype.checkExchangeTrades = function(since, next) {
   var provider = config.watch.exchange.toLowerCase();
   var DataProvider = require(util.dirs().gekko + 'exchanges/' + provider);
 
-  var exchangeChecker = require(util.dirs().core + 'exchangeChecker');
-  var exchangeSettings = exchangeChecker.settings(config.watch)
 
   var watcher = new DataProvider(config.watch);
 
@@ -194,7 +207,8 @@ Stitcher.prototype.checkExchangeTrades = function(since, next) {
 
     next(e, {
       from: _.first(d).date,
-      to: _.last(d).date
+      to: _.last(d).date,
+      data: d
     })
   });
 }

@@ -35,7 +35,8 @@ Mailer.prototype.setup = function(done) {
       host: mailConfig.server,
       ssl: mailConfig.ssl,
       port: mailConfig.port,
-      tls: mailConfig.tls
+      tls: mailConfig.tls, 
+      timeout: 10000
     });
 
     if(mailConfig.sendMailOnStart) {

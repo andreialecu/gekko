@@ -147,6 +147,11 @@ PaperTrader.prototype.processAdvice = function(advice) {
   if(advice.recommendation === 'soft')
     return;
 
+  if (advice.recommendation == this.lastAdvice)
+    return;
+
+  this.lastAdvice = advice.recommendation;
+  
   this.updatePosition(advice);
   let trade = this.calcTrade(advice);
   let report = this.calculateReportStatistics();

@@ -27,7 +27,8 @@ method.init = function() {
     bounces: 0,
     willBounce: false,
     persisted: false,
-    adviced: false
+    adviced: false,
+    flats: 0
   };
 
   this.requiredHistory = config.tradingAdvisor.historySize;
@@ -61,7 +62,8 @@ method.check = function() {
         willBounce: false,
         persisted: false,
         direction: 'high',
-        adviced: false
+        adviced: false,
+        flats: 0
       };
 
     this.trend.duration++;
@@ -95,7 +97,8 @@ method.check = function() {
         willBounce: false,
         persisted: false,
         direction: 'low',
-        adviced: false
+        adviced: false,
+        flats: 0
       };
 
     this.trend.duration++;
@@ -120,6 +123,12 @@ method.check = function() {
 
   } else {
     this.trend.duration = 0;
+    this.trend.flats++;
+    if (this.trend.flats >= settings.thresholds.resetNoTrend) {
+      this.trend.bounces = 0;
+      this.trend.flats = 0;
+    }
+
     log.debug('In no trend');
     this.trend.willBounce = true;
     this.advice();

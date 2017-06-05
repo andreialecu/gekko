@@ -1,0 +1,9 @@
+interval = 13
+
+[thresholds]
+low = 31
+high = 70
+persistenceLow = 2
+persistenceHigh = 1
+bouncesLow = 3
+bouncesHigh = 1

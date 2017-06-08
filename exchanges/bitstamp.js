@@ -64,7 +64,7 @@ Trader.prototype.getTicker = function(callback) {
 Trader.prototype.getFee = function(callback) {
   var set = function(err, data) {
     if(err)
-      callback(err);
+      return callback(err);
 
     callback(false, data.fee / 100);
   }.bind(this);

@@ -50,6 +50,11 @@ method.log = function(candle) {
 }
 
 method.check = function(candle) {
+  if (candle.trades == 0) {
+    log.debug('No trades for candle, skipping strat check');
+    return this.advice();
+  }
+
   var rsi = this.indicators.rsi;
   var rsiVal = rsi.rsi;
 

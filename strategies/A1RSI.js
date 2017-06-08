@@ -46,9 +46,10 @@ method.log = function(candle) {
   log.debug('calculated RSI properties for candle:');
   log.debug('\t', 'rsi:', rsi.rsi.toFixed(digits));
   log.debug('\t', 'price:', candle.close.toFixed(digits));
+  log.debug('\t', 'volume:', candle.volume.toFixed(digits), 'trades:', candle.trades, 'vwp:', candle.vwp);
 }
 
-method.check = function() {
+method.check = function(candle) {
   var rsi = this.indicators.rsi;
   var rsiVal = rsi.rsi;
 
